@@ -1,6 +1,6 @@
-# Traffic Congestion Perimeter Detection with GCN + PPO
+# Traffic Congestion Perimeter Identification
 
-This project learns a congestion perimeter over an urban road network using a **Graph Convolutional Network (GCN)** trained with **Proximal Policy Optimization (PPO)**. The pipeline loads a SUMO road network and floating-car-data (FCD), builds KDE-based heatmaps, trains an agent to choose junctions that define a convex-hull perimeter, run post-processing and then exports visualizations and evaluation metrics.
+This thesis introduces a novel approach for identifying and defining the perimeter of traffic congestion, based on an integrated analysis of heat maps and graph representations of the transportation network. To achieve this, the study applies Deep Reinforcement Learning (DRL) algorithms capable of decoding complex spatial and topological information to efficiently delineate congested areas.
 
 ## What the project does
 
