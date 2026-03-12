@@ -1,0 +1,48 @@
+# Configuration for single-run GCN + PPO training across multiple timesteps
+
+# Model architecture
+model:
+  hidden_dim: 128
+  embedding_dim: 64
+  num_gcn_layers: 2
+  dropout: 0.1
+  action_head_dims: [64, 32]
+  value_head_dims: [64, 32]
+
+# PPO agent
+agent:
+  lr_start: 3.0e-4          # Starting learning rate
+  lr_end: 1.0e-5            # Ending learning rate
+  entropy_coef: 0.05
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_ratio: 0.2
+  value_coef: 0.5
+  max_grad_norm: 0.5
+  ppo_epochs: 10
+  ppo_batch_size: 64
+
+# Training
+training:
+  seed: 42                          # Single random seed for this run
+  num_episodes: 10000
+  max_steps_per_episode: 200
+  update_frequency: 2048
+  evaluation_interval: 10           # Evaluate every N episodes
+  log_interval: 100                 # Log every N episodes
+
+# Environment
+environment:
+  train_timesteps: [1100, 1200, 1500, 1950, 2300, 2600, 2900, 3200, 3700, 4600]  # List of timesteps to train on
+  eval_timesteps: [ 1000,1300,1600,1900,2200,2500,2800,3100,3300,3600,3900,4500,4800] # Timesteps for the agent to be evaluated on
+  lambda_reg: 0.1                   # Single lambda value for this run
+  congestion_threshold: 0.85
+
+# Paths
+paths:
+  data_root: "data"
+  default_city: "Toronto"
+  net_filename: "osm.net.xml"
+  data_filename: "fcd.csv"
+  output_root: "outputs"
+  model_filename: "final_model.pt"
