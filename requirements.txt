@@ -1,0 +1,11 @@
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+networkx
+opencv-python
+PyYAML
+gymnasium
+torch
+sumolib
