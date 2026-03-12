@@ -72,6 +72,11 @@ The code uses these columns:
 
 If `data/<City>/city\_config.yaml` exists, it overrides the timestep lists from the main `config.yaml`.
 
+## Prerequisites
+
+- Python 3.10+ recommended
+- pip install -r requirements.txt
+
 ## Installation
 
 Create and activate a virtual environment:
