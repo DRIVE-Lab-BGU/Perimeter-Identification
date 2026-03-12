@@ -1,6 +1,6 @@
 # Traffic Congestion Perimeter Detection with GCN + PPO
 
-This project learns a congestion perimeter over an urban road network using a **Graph Convolutional Network (GCN)** policy trained with **Proximal Policy Optimization (PPO)**. The pipeline loads a SUMO road network and floating-car-data (FCD), builds KDE-based heatmaps for selected timesteps, trains an agent to choose junctions that define a convex-hull perimeter, and then exports visualizations and evaluation metrics.
+This project learns a congestion perimeter over an urban road network using a **Graph Convolutional Network (GCN)** trained with **Proximal Policy Optimization (PPO)**. The pipeline loads a SUMO road network and floating-car-data (FCD), builds KDE-based heatmaps, trains an agent to choose junctions that define a convex-hull perimeter, run post-processing and then exports visualizations and evaluation metrics.
 
 ## What the project does
 
@@ -12,7 +12,7 @@ This project learns a congestion perimeter over an urban road network using a **
 
   * convex-hull visualizations
   * final post-processed perimeter images
-  * per-timestep edge statistics and WWC-based metrics
+  * statistics and WWC-based metrics
 
 ## Expected project structure
 
