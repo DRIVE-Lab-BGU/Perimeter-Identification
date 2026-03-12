@@ -12,7 +12,7 @@ This project learns a congestion perimeter over an urban road network using a **
 
   * convex-hull visualizations
   * final post-processed perimeter images
-  * statistics and WWC-based metrics
+  * statistics and metrics
 
 ## Expected project structure
 
