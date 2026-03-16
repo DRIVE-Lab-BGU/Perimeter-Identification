@@ -92,10 +92,9 @@ Install the Python dependencies:
 pip install torch numpy pandas scipy matplotlib seaborn pyyaml opencv-python gymnasium networkx sumolib
 ```
 
-The project imports `sumolib` directly. A PyPI package named `sumolib` is available, and the official SUMO documentation also notes that `sumolib` can come from the SUMO tools directory under `SUMO\_HOME/tools`. citeturn116934search0turn538171search0turn538171search10
+The project imports `sumolib` directly. A PyPI package named `sumolib` is available, and the official SUMO documentation also notes that `sumolib` can come from the SUMO tools directory under `SUMO\_HOME/tools`.
 
-If your environment provides `sumolib` through a local SUMO installation instead of PyPI, set `SUMO\_HOME` and add its `tools` directory to your Python path as described in the SUMO docs. citeturn538171search0turn538171search10
-
+If your environment provides `sumolib` through a local SUMO installation instead of PyPI, set `SUMO\_HOME` and add its `tools` directory to your Python path as described in the SUMO docs.
 ## Configuration
 
 Main configuration is stored in `config.yaml`.
