@@ -462,6 +462,9 @@ class SimplifiedJunctionEnv(gym.Env):
             
             # New Set: Keep track of which perimeter nodes actually get an cyan road
             connected_perimeter_nodes = set()
+
+            # Track every junction that is an endpoint of a drawn (cyan) road
+            cyan_road_junctions = set()
     
             for edge in self.net.getEdges():
                 from_id = edge.getFromNode().getID()
@@ -482,6 +485,10 @@ class SimplifiedJunctionEnv(gym.Env):
                         connected_perimeter_nodes.add(from_id)
                     if is_end_perim:
                         connected_perimeter_nodes.add(to_id)
+
+                    # Record both endpoints as being connected to a cyan road
+                    cyan_road_junctions.add(from_id)
+                    cyan_road_junctions.add(to_id)
                     
                     # 2. Draw the road
                     shape = edge.getShape()
@@ -489,7 +496,58 @@ class SimplifiedJunctionEnv(gym.Env):
                         pixel_points = [NetworkHeatmap.coord_to_pixel(x, y, bbox, img.shape) for x, y in shape]
                         pts = np.array(pixel_points, np.int32).reshape((-1, 1, 2))
                         cv2.polylines(img, [pts], False, (255, 255, 0), 2)
-    
+
+            # --- 4b. Rescue bridging convex-hull vertices (single pass) ---
+            # A convex-hull vertex that ended up NOT red, is NOT touching any cyan
+            # road, but sits between >= 2 red junctions, is promoted to red. This
+            # closes gaps in the perimeter ring.
+
+            # Identify the convex-hull vertex junctions (pre-post-processing perimeter)
+            hull_coords = set(tuple(p) for p in self.hull_points[self.convex_hull.vertices])
+            hull_vertex_nodes = set()
+            for j_id in self.active_junctions:
+                jd = self.junction_dict[j_id]
+                if (jd['pixel_x'], jd['pixel_y']) in hull_coords:
+                    hull_vertex_nodes.add(j_id)
+
+            # Snapshot of the red set so this stays a single pass (a junction
+            # rescued here cannot help rescue another in the same pass).
+            red_before = set(connected_perimeter_nodes)
+            newly_red = set()
+
+            for j_id in hull_vertex_nodes:
+                # Skip if already red or if it touches a cyan road
+                if j_id in red_before or j_id in cyan_road_junctions:
+                    continue
+                if not self.net.hasNode(j_id):
+                    continue
+
+                # Collect road-connected neighbors and count how many are red
+                node = self.net.getNode(j_id)
+                neighbors = set()
+                for edge in list(node.getOutgoing()) + list(node.getIncoming()):
+                    nb = edge.getToNode().getID() if edge.getFromNode().getID() == j_id \
+                        else edge.getFromNode().getID()
+                    if nb in self.junction_dict:
+                        neighbors.add(nb)
+
+                if len(neighbors & red_before) >= 2:
+                    newly_red.add(j_id)
+
+            connected_perimeter_nodes |= newly_red
+
+            # --- 4c. Close the ring: draw CYAN roads between any two red junctions ---
+            for edge in self.net.getEdges():
+                from_id = edge.getFromNode().getID()
+                to_id = edge.getToNode().getID()
+
+                if from_id in connected_perimeter_nodes and to_id in connected_perimeter_nodes:
+                    shape = edge.getShape()
+                    if shape:
+                        pixel_points = [NetworkHeatmap.coord_to_pixel(x, y, bbox, img.shape) for x, y in shape]
+                        pts = np.array(pixel_points, np.int32).reshape((-1, 1, 2))
+                        cv2.polylines(img, [pts], False, (255, 255, 0), 2)
+
             # --- 5. Draw Red Perimeter Nodes (Filtered) ---
             # We now iterate over 'connected_perimeter_nodes' instead of all 'perimeter_nodes'
             for j_id in connected_perimeter_nodes:
@@ -501,7 +559,6 @@ class SimplifiedJunctionEnv(gym.Env):
                 cv2.waitKey(1)
             else:
                 return img
-
     def get_valid_remove_candidates(self):
         if self.convex_hull is None or len(self.active_junctions) <= 3:
             return set()
